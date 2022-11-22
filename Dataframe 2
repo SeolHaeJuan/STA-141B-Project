@@ -1,0 +1,19 @@
+# Only 2021 for data
+url = "https://visualizedata.ucop.edu/t/Public/views/AdmissionsDataTable/TREthbyYr?:embed_code_version=3&:embed=y&:loadOrderID=0&:display_spinner=no&:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link"
+ts = TS()
+ts.loads(url)
+workbook = ts.getWorkbook()
+
+for t in workbook.worksheets:
+    print(f"worksheet name : {t.name}") #show worksheet name
+    print(t.data) #show dataframe for this worksheet
+   
+mainframe = t.data
+mainframe.drop(mainframe.columns[[1, 2, 3, 4, 7, 8, 11]], axis=1, inplace=True)
+mainframe.rename(columns = {'School-value': 'School', 'County-alias': 'County', 'City-value': 'City', 'Count-alias': 'Type', 'Uad Uc Ethn 6 Cat-value': 'Eth','SUM(Pivot Field Values)-alias':'Value'}, inplace = True)
+mainframe.loc[mainframe["Value"] == "%null%", "Value"] = 0
+
+enr_frame = mainframe[mainframe['Type'] == 'Enr'] # If we want we can subset further based on other characteristics
+adm_frame = mainframe[mainframe['Type'] == 'Adm']
+app_frame = mainframe[mainframe['Type'] == 'App']
+tot_frame = mainframe[mainframe['Eth] == 'All']
