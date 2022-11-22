@@ -17,3 +17,5 @@ enr_frame = mainframe[mainframe['Type'] == 'Enr'] # If we want we can subset fur
 adm_frame = mainframe[mainframe['Type'] == 'Adm']
 app_frame = mainframe[mainframe['Type'] == 'App']
 tot_frame = mainframe[mainframe['Eth] == 'All']
+
+enr_frame.sort_values(by=['Value'], ascending = False) # I want to create a ratio for these so that we can see what schools have the best admit rates, or most of what ethnicity.
