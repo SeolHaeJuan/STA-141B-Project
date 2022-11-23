@@ -14,10 +14,26 @@ mainframe.drop(mainframe.columns[[1, 2, 3, 4, 7, 8, 11]], axis=1, inplace=True)
 mainframe.rename(columns = {'School-value': 'School', 'County-alias': 'County', 'City-value': 'City', 'Count-alias': 'Type', 'Uad Uc Ethn 6 Cat-value': 'Eth','SUM(Pivot Field Values)-alias':'Value'}, inplace = True)
 mainframe.loc[mainframe["Value"] == "%null%", "Value"] = 0
 
+# We may want to get rid of the 'Unknown' ethnicity
 enr_frame = mainframe.loc[(mainframe['Type'] == 'Enr') & (mainframe['Eth'] != 'All')] # This is cuz everytime you sort for what eth has the most, 'All' will return every time.
 adm_frame = mainframe.loc[(mainframe['Type'] == 'Adm') & (mainframe['Eth'] != 'All')]
 app_frame = mainframe.loc[(mainframe['Type'] == 'App') & (mainframe['Eth'] != 'All')]
 tot_frame = mainframe[mainframe['Eth'] == 'All']
+
+# Resetting index so we can properly divide the columns later
+enr_frame = enr_frame.reset_index()
+adm_frame = adm_frame.reset_index()
+app_frame = app_frame.reset_index()
+
+# Getting rid of index col
+enr_frame.drop(enr_frame.columns[[0]],axis=1,inplace=True) 
+adm_frame.drop(adm_frame.columns[[0]], axis = 1, inplace = True)
+app_frame.drop(app_frame.columns[[0]],axis=1,inplace=True)
+
+# Switching to float for division later ,see line 50
+app_frame['Value'] = pd.to_numeric(app_frame['Value'])
+adm_frame['Value'] = pd.to_numeric(adm_frame['Value'])
+enr_frame['Value'] = pd.to_numeric(adm_frame['Value'])
 
 int_enr = mainframe.loc[(mainframe['Type'] == 'Enr') & (mainframe['Eth'] == 'International')] # For both enroll and international students
 int_enr.sort_values(by=['Value'], ascending = False)
@@ -30,3 +46,13 @@ adm_max[adm_max.School == 'DIABLO VALLEY COLLEGE'] # Just one instance for a sch
 
 # Right now, we can produce a lot of descriptive statistics. We need to produce ratios of different ethnicities for each college.
 # For example, using ALLAN HANCOCK COLLEGE value for 'All', I want to divide each individual ethnicity by this value. 
+
+# This gives us a rate. The rate is the percentage of students that were admitted out of those who applied for each eth at each school.
+# The idea is that we could see which ethnicity had the highest rate and use that for our stats. 
+pd.set_option('mode.use_inf_as_na', True)
+app_frame['Value'] = pd.to_numeric(app_frame['Value'])
+adm_frame['Value'] = pd.to_numeric(adm_frame['Value'])
+adm_frame['Rate'] = adm_frame['Value']/app_frame['Value']
+adm_frame = adm_frame.fillna(0)
+
+adm_frame.sort_values('Rate', ascending=False).head(10)
