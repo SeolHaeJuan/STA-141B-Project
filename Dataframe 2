@@ -57,3 +57,5 @@ adm_frame = adm_frame.fillna(0)
 
 adm_frame[adm_frame.Eth == 'American Indian'].sort_values(by = ['Rate'], ascending = False).head(20)
 adm_frame.sort_values('Rate', ascending=False).head(10)
+
+adm_frame.loc[adm_frame['Rate'] == 1.0] # Colleges with admit rate of 100% per ethnicity
