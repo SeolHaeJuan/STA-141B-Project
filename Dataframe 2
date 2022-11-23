@@ -3,6 +3,7 @@ url = "https://visualizedata.ucop.edu/t/Public/views/AdmissionsDataTable/TREthby
 ts = TS()
 ts.loads(url)
 workbook = ts.getWorkbook()
+app_frame.sort_values('Value', ascending=False).drop_duplicates('School').sort_index()
 
 for t in workbook.worksheets:
     print(f"worksheet name : {t.name}") #show worksheet name
@@ -13,12 +14,19 @@ mainframe.drop(mainframe.columns[[1, 2, 3, 4, 7, 8, 11]], axis=1, inplace=True)
 mainframe.rename(columns = {'School-value': 'School', 'County-alias': 'County', 'City-value': 'City', 'Count-alias': 'Type', 'Uad Uc Ethn 6 Cat-value': 'Eth','SUM(Pivot Field Values)-alias':'Value'}, inplace = True)
 mainframe.loc[mainframe["Value"] == "%null%", "Value"] = 0
 
-enr_frame = mainframe[mainframe['Type'] == 'Enr'] # If we want we can subset further based on other characteristics
-adm_frame = mainframe[mainframe['Type'] == 'Adm']
-app_frame = mainframe[mainframe['Type'] == 'App']
-tot_frame = mainframe[mainframe['Eth] == 'All']
+enr_frame = mainframe.loc[(mainframe['Type'] == 'Enr') & (mainframe['Eth'] != 'All')] # This is cuz everytime you sort for what eth has the most, 'All' will return every time.
+adm_frame = mainframe.loc[(mainframe['Type'] == 'Adm') & (mainframe['Eth'] != 'All')]
+app_frame = mainframe.loc[(mainframe['Type'] == 'App') & (mainframe['Eth'] != 'All')]
+tot_frame = mainframe[mainframe['Eth'] == 'All']
+
 int_enr = mainframe.loc[(mainframe['Type'] == 'Enr') & (mainframe['Eth'] == 'International')] # For both enroll and international students
 int_enr.sort_values(by=['Value'], ascending = False)
 tot_frame[tot_frame.Type == 'App'].sort_values(by=['Value'], ascending = False) # Which colleges generally get the most students admitted
 
 enr_frame.sort_values(by=['Value'], ascending = False) # I want to create a ratio for these so that we can see what schools have the best admit rates, or most of what ethnicity.
+
+adm _max = adm_frame.sort_values('Value', ascending=False).drop_duplicates('School').sort_index() # For each school, it returns the ethnicity group who got the most admits. 
+adm_max[adm_max.School == 'DIABLO VALLEY COLLEGE'] # Just one instance for a school
+
+# Right now, we can produce a lot of descriptive statistics. We need to produce ratios of different ethnicities for each college.
+# For example, using ALLAN HANCOCK COLLEGE value for 'All', I want to divide each individual ethnicity by this value. 
