@@ -55,4 +55,5 @@ adm_frame['Value'] = pd.to_numeric(adm_frame['Value'])
 adm_frame['Rate'] = adm_frame['Value']/app_frame['Value']
 adm_frame = adm_frame.fillna(0)
 
+adm_frame[adm_frame.Eth == 'American Indian'].sort_values(by = ['Rate'], ascending = False).head(20)
 adm_frame.sort_values('Rate', ascending=False).head(10)
