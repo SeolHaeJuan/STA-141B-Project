@@ -1,3 +1,15 @@
+# Packages
+import pandas as pd
+import numpy as np
+from tableauscraper import TableauScraper as TS
+import seaborn as sns
+import plotnine as p9
+import plotly.express as px
+import plotly.io as pio
+import sklearn as sk
+import sklearn.linear_model
+import random
+
 # Only 2021 for data
 url = "https://visualizedata.ucop.edu/t/Public/views/AdmissionsDataTable/TREthbyYr?:embed_code_version=3&:embed=y&:loadOrderID=0&:display_spinner=no&:showAppBanner=false&:display_count=n&:showVizHome=n&:origin=viz_share_link"
 ts = TS()
@@ -75,3 +87,44 @@ print(fitted.coef_)
 print(fitted.intercept_)
 
 # This is using the rates as the continuous variable and the ethnicity as the vars. Each coeff represents each ethnicity. 
+
+
+# Plots
+fig = px.box(adm_frame, x="Rate", y="Eth", color="Eth", points = "all",
+                 labels={
+                     "Rate": "Admittance Rate",
+                     "Eth": "Ethnicity",
+                 },
+                title="Boxplot of Admittance Rate Per Each Ethnicity")
+fig.show()
+
+# For scatterplot regression one
+def label_race(row):
+   if row['Eth'] == 'International':
+      return random.randint(1,10)
+   if row['Eth'] == 'Unknown':
+      return random.randint(11,20)
+   if row['Eth'] == 'White':
+      return random.randint(21, 30)
+   if row['Eth'] == 'Asian':
+      return random.randint(31, 40)
+   if row['Eth']  == 'Chicano/Latino':
+      return random.randint(41,50)
+   if row['Eth'] == 'American Indian':
+      return random.randint(51,60)
+   if row['Eth'] == 'African American':
+      return random.randint(61,70)
+
+adm_frame['Race Label'] = adm_frame.apply(lambda row: label_race(row), axis=1)
+test_frame = adm_frame.loc[adm_frame['Rate']>0]
+
+# scuffed but I'm working on it
+fig = px.scatter(test_frame, 
+                 x = 'Race Label',
+                 y = 'Rate',
+                 template = 'plotly_dark',
+                 color = 'Race Label',
+                 trendline = 'ols',
+                 title = 'Admit Rate Per Different Ethnicities')
+fig.update_layout(showlegend=True)
+fig.show()
