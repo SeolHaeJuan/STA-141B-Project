@@ -43,6 +43,7 @@ enr_frame.sort_values(by=['Value'], ascending = False) # I want to create a rati
 
 adm _max = adm_frame.sort_values('Value', ascending=False).drop_duplicates('School').sort_index() # For each school, it returns the ethnicity group who got the most admits. 
 adm_max[adm_max.School == 'DIABLO VALLEY COLLEGE'] # Just one instance for a school
+adm_max.Eth.value_counts() # This is the count of what ethnicity each college's max amount of admits is equal to.
 
 # Right now, we can produce a lot of descriptive statistics. We need to produce ratios of different ethnicities for each college.
 # For example, using ALLAN HANCOCK COLLEGE value for 'All', I want to divide each individual ethnicity by this value. 
@@ -60,6 +61,12 @@ adm_frame.sort_values('Rate', ascending=False).head(10)
 
 adm_frame.loc[adm_frame['Rate'] == 1.0] # Colleges with admit rate of 100% per ethnicity
 adm_frame.loc[adm_frame['Rate'] == 1.0]['Eth'].value_counts() # Counts how many time each eth appears for those that had 100% admit rate. Good for desc stats.
+
+# To check whether or not the international count were outliers. 
+one_outs = adm_frame.loc[adm_frame['Rate'] == 1.0]
+inters = one_outs[one_outs['Eth'] == 'International']['School'] # The 11 schools with 100% international student admittance
+result1 = adm_max[adm_max['School'].isin(list(inters))]
+result1 # From this result, we see that all the schools with a 100% international student admit rate, do not have international students as their ethnicity with max admittance. 
 
 # Logistic regression
 lr = sk.linear_model.LogisticRegression()
