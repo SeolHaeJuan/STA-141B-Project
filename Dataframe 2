@@ -59,4 +59,12 @@ adm_frame[adm_frame.Eth == 'American Indian'].sort_values(by = ['Rate'], ascendi
 adm_frame.sort_values('Rate', ascending=False).head(10)
 
 adm_frame.loc[adm_frame['Rate'] == 1.0] # Colleges with admit rate of 100% per ethnicity
-adm_frame.loc[adm_frame['Rate'] == 1.0]['Eth'].value_counts() # Counts how many time each eth appears for those that had 100% admit rate. 
+adm_frame.loc[adm_frame['Rate'] == 1.0]['Eth'].value_counts() # Counts how many time each eth appears for those that had 100% admit rate. Good for desc stats.
+
+# Logistic regression
+lr = sk.linear_model.LogisticRegression()
+fitted = lr.fit(adm_frame.Rate.values.reshape(-1, 1), adm_frame.Eth)
+print(fitted.coef_)
+print(fitted.intercept_)
+
+# This is using the rates as the continuous variable and the ethnicity as the vars. Each coeff represents each ethnicity. 
