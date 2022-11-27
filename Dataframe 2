@@ -66,6 +66,11 @@ adm_frame['Value'] = pd.to_numeric(adm_frame['Value'])
 adm_frame['Rate'] = adm_frame['Value']/app_frame['Value']
 adm_frame = adm_frame.fillna(0)
 
+# Getting rid of unknowns. Better to do it after we calculated rate to not mess with positioning
+adm_frame = adm_frame[adm_frame['Eth']!= 'Unknown']
+app_frame = app_frame[app_frame['Eth']!= 'Unknown']
+enr_frame = enr_frame[enr_frame['Eth']!= 'Unknown']
+
 # Adm Max Frame
 adm _max = adm_frame.sort_values('Value', ascending=False).drop_duplicates('School').sort_index() # For each school, it returns the ethnicity group who got the most admits. 
 adm_max[adm_max.School == 'DIABLO VALLEY COLLEGE'] # Just one instance for a school
@@ -162,7 +167,7 @@ scores = scores.set_axis([c+"-score" for c in lr.classes_],axis = 1)
 log_frame = pd.concat((test,scores), axis = 1)
 log_frame.head(5)
 
-# 4 equation
+# 4 equation, differs from the one above
 lr = sk.linear_model.LogisticRegression()
 fitted = lr.fit(adm_frame.Rate.values.reshape(-1, 1), adm_frame.Eth)
 print(fitted.coef_)
