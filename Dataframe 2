@@ -82,15 +82,7 @@ adm_frame.loc[adm_frame['Rate'] == 1.0]['Eth'].value_counts() # Counts how many 
 one_outs = adm_frame.loc[adm_frame['Rate'] == 1.0]
 inters = one_outs[one_outs['Eth'] == 'International']['School'] # The 11 schools with 100% international student admittance
 result1 = adm_max[adm_max['School'].isin(list(inters))]
-result1 # From this result, we see that all the schools with a 100% international student admit rate, do not have international students as their ethnicity with max admittance. 
-
-# Logistic regression
-lr = sk.linear_model.LogisticRegression()
-fitted = lr.fit(adm_frame.Rate.values.reshape(-1, 1), adm_frame.Eth)
-print(fitted.coef_)
-print(fitted.intercept_)
-
-# This is using the rates as the continuous variable and the ethnicity as the vars. Each coeff represents each ethnicity. 
+result1 # From this result, we see that all the schools with a 100% international student admit rate, do not have international students as their ethnicity with max admittance.  
 
 
 ## Plots
@@ -169,3 +161,11 @@ scores = test.iloc[:, 5:7] @ coef[:, :7]
 scores = scores.set_axis([c+"-score" for c in lr.classes_],axis = 1)
 log_frame = pd.concat((test,scores), axis = 1)
 log_frame.head(5)
+
+# 4 equation
+lr = sk.linear_model.LogisticRegression()
+fitted = lr.fit(adm_frame.Rate.values.reshape(-1, 1), adm_frame.Eth)
+print(fitted.coef_)
+print(fitted.intercept_)
+
+# This is using the rates as the continuous variable and the ethnicity as the vars. Each coeff represents each ethnicity.
