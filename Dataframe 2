@@ -154,3 +154,18 @@ fig.update_layout(
 )
 fig.update_traces(cells_font=dict(size = 10))
 fig.show()
+
+## Logistic Regression
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression()
+lr.fit(train[['Rate']], train['Eth'])
+test.copy()
+test['predicted'] = lr.predict(test[['Rate']])
+lr.coef_, lr.intercept_
+coef = np.vstack((lr.coef_.T, lr.intercept_))
+coef
+scores = test.iloc[:, 5:7] @ coef[:, :7]
+scores = scores.set_axis([c+"-score" for c in lr.classes_],axis = 1)
+log_frame = pd.concat((test,scores), axis = 1)
+log_frame.head(5)
