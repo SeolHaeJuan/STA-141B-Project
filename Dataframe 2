@@ -15,7 +15,6 @@ url = "https://visualizedata.ucop.edu/t/Public/views/AdmissionsDataTable/TREthby
 ts = TS()
 ts.loads(url)
 workbook = ts.getWorkbook()
-app_frame.sort_values('Value', ascending=False).drop_duplicates('School').sort_index()
 
 for t in workbook.worksheets:
     print(f"worksheet name : {t.name}") #show worksheet name
