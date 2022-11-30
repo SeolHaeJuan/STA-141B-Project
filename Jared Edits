@@ -1,0 +1,81 @@
+# Edits
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split # Import train_test_split function
+from sklearn import metrics
+feature_cols = ['Rate']#, 'Value'
+X = adm_frame[feature_cols] # Features # This needs to be eth and rate is Y
+y = adm_frame.Eth # Target variable
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+
+# Create Decision Tree classifer object
+clf = DecisionTreeClassifier()
+
+# Train Decision Tree Classifer
+clf = clf.fit(X_train,y_train)
+
+#Predict the response for test dataset
+y_pred = clf.predict(X_test)
+
+# Figure Importance Graph
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+feature_names = [f"feature {i}" for i in range(X.shape[1])]
+forest = RandomForestClassifier(random_state=0)
+forest.fit(X_train, y_train)
+
+importances = forest.feature_importances_
+std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
+
+forest_importances = pd.Series(importances, index=feature_names)
+
+fig, ax = plt.subplots()
+forest_importances.plot.bar(yerr=std, ax=ax)
+ax.set_title("Feature importances using MDI")
+ax.set_ylabel("Mean decrease in impurity")
+fig.tight_layout()
+
+model = DecisionTreeClassifier()
+# fit the model
+model.fit(X, y)
+importance = model.feature_importances_
+# summarize feature importance
+for i,v in enumerate(importance):
+	print('Feature: %0d, Score: %.5f' % (i,v))
+# plot feature importance
+pyplot.bar([x for x in range(len(importance))], importance)
+pyplot.show()
+
+# for the encoding to try and get clf to work, bad didnt work
+def label_race(row):
+   if row['Eth'] == 'International':
+      return 1
+   if row['Eth'] == 'Unknown':
+      return 0
+   if row['Eth'] == 'White':
+      return 2
+   if row['Eth'] == 'Asian':
+      return 3
+   if row['Eth']  == 'Chicano/Latino':
+      return 4
+   if row['Eth'] == 'American Indian':
+      return 5
+   if row['Eth'] == 'African American':
+      return 6
+test_frame = adm_frame
+test_frame['Race Label'] = adm_frame.apply(lambda row: label_race(row), axis=1)
+
+X = adm_frame[['School','County','City','Eth']]
+Y = adm_frame['Rate']
+X = pd.get_dummies(data=X, drop_first=True)
+
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
+import statsmodels.api as sm
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = .20, random_state = 40)
+
+regr = linear_model.LinearRegression() # Do not use fit_intercept = False if you have removed 1 column after dummy encoding
+regr.fit(X_train, Y_train)
+predicted = regr.predict(X_test)
+
